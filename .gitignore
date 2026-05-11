@@ -1,0 +1,17 @@
+# User-local state
+ignore_rules.json
+sample_data
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Tool caches
+.ruff_cache/
+.pytest_cache/
+
+# Editor / OS
+.~lock.*
+.DS_Store
+.claude
