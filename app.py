@@ -109,7 +109,7 @@ def main() -> None:
     # --- Sidebar ---
     with st.sidebar:
         st.header("Import")
-        uploaded = st.file_uploader("CSV export", type="csv")
+        uploaded = st.file_uploader("Bank statement", type="csv")
 
         st.header("Ignore rules")
         if "ignore_rules" not in st.session_state:
@@ -159,13 +159,28 @@ def main() -> None:
 
     # --- Drill-down ---
     st.subheader("Details")
-    selected_label = st.selectbox(
+    all_categories = sorted({t.category for t in txs})
+    all_accounts = sorted({t.account for t in txs})
+
+    fcol1, fcol2, fcol3, fcol4 = st.columns(4)
+    selected_label = fcol1.selectbox(
         "Month", [_month_label(k) for k in sorted(sorted_keys, reverse=True)]
     )
+    selected_flow = fcol2.selectbox("Flow", ["All", "Income", "Expenses"])
+    selected_category = fcol3.selectbox("Category", ["All", *all_categories])
+    selected_account = fcol4.selectbox("Account", ["All", *all_accounts])
     query = st.text_input("Search label").lower()
 
     selected_key = (int(selected_label[:4]), int(selected_label[5:7]))
     month_txs = [t for t in txs if (t.date.year, t.date.month) == selected_key]
+    if selected_flow == "Income":
+        month_txs = [t for t in month_txs if t.amount >= 0]
+    elif selected_flow == "Expenses":
+        month_txs = [t for t in month_txs if t.amount < 0]
+    if selected_category != "All":
+        month_txs = [t for t in month_txs if t.category == selected_category]
+    if selected_account != "All":
+        month_txs = [t for t in month_txs if t.account == selected_account]
     if query:
         month_txs = [t for t in month_txs if query in t.label.lower()]
 
@@ -185,7 +200,7 @@ def main() -> None:
         width="stretch",
         selection_mode="multi-row",
         on_select="rerun",
-        key=f"df_{selected_label}_{query}",
+        key=f"df_{selected_label}_{selected_flow}_{selected_category}_{selected_account}_{query}",
     )  # type: ignore[no-untyped-call]
 
     selected_indices: list[int] = (getattr(selection, "selection", None) or {}).get(
