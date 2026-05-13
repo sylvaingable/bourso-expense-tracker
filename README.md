@@ -22,14 +22,7 @@ Then open `http://localhost:8501` and upload your BoursoBank CSV export.
 
 ### Self-hosted with Docker
 
-```dockerfile
-FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
-WORKDIR /app
-COPY . .
-RUN uv sync --no-dev
-EXPOSE 8501
-CMD ["uv", "run", "streamlit", "run", "app.py", "--server.address=0.0.0.0"]
-```
+A `Dockerfile` is included in the repo.
 
 ```bash
 docker build -t expense-tracker .
