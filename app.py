@@ -96,14 +96,14 @@ def _month_label(key: tuple[int, int]) -> str:
 
 
 def main() -> None:
-    st.set_page_config(page_title="Expense Tracker", layout="wide")
+    st.set_page_config(page_title="Suivi des dépenses", layout="wide")
 
     # --- Sidebar ---
     with st.sidebar:
         st.header("Import")
-        uploaded = st.file_uploader("Bank statement", type="csv")
+        uploaded = st.file_uploader("Relevé bancaire", type="csv")
 
-        st.header("Ignore rules")
+        st.header("Règles d'exclusion")
         if "ignore_rules" not in st.session_state:
             st.session_state.ignore_rules = load_ignore_rules()
 
@@ -116,14 +116,14 @@ def main() -> None:
                 save_ignore_rules(rules)
                 st.rerun()
 
-        new_rule = st.text_input("New rule", key="new_rule_input")
-        if st.button("Add rule") and new_rule.strip():
+        new_rule = st.text_input("Nouvelle règle", key="new_rule_input")
+        if st.button("Ajouter") and new_rule.strip():
             rules.append(new_rule.strip())
             save_ignore_rules(rules)
             st.rerun()
 
     if uploaded is None:
-        st.info("Upload a BoursoBank CSV export to get started.")
+        st.info("Importez un export CSV BoursoBank pour commencer.")
         return
 
     # --- Data pipeline ---
@@ -136,58 +136,58 @@ def main() -> None:
     sorted_keys = sorted(monthly)
 
     # --- Overview chart ---
-    st.subheader("Monthly overview")
+    st.subheader("Vue d'ensemble mensuelle")
     labels = [_month_label(k) for k in sorted_keys]
     income = [monthly[k]["income"] for k in sorted_keys]
     expenses = [monthly[k]["expenses"] for k in sorted_keys]
     net = [i - e for i, e in zip(income, expenses, strict=True)]
 
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=labels, y=income, name="Income", marker_color="#2ca02c"))
-    fig.add_trace(go.Bar(x=labels, y=expenses, name="Expenses", marker_color="#d62728"))
-    fig.add_trace(go.Scatter(x=labels, y=net, name="Net", mode="lines+markers"))
-    fig.update_layout(barmode="group", xaxis_title="Month", yaxis_title="€")
+    fig.add_trace(go.Bar(x=labels, y=income, name="Revenus", marker_color="#2ca02c"))
+    fig.add_trace(go.Bar(x=labels, y=expenses, name="Dépenses", marker_color="#d62728"))
+    fig.add_trace(go.Scatter(x=labels, y=net, name="Solde", mode="lines+markers"))
+    fig.update_layout(barmode="group", xaxis_title="Mois", yaxis_title="€")
     st.plotly_chart(fig, width="stretch")  # type: ignore[no-untyped-call]
 
     total_income = sum(income)
     total_expenses = sum(expenses)
     mc1, mc2, mc3 = st.columns(3)
-    mc1.metric("Total income", f"€{total_income:,.2f}")
-    mc2.metric("Total expenses", f"€{total_expenses:,.2f}")
-    mc3.metric("Net", f"€{total_income - total_expenses:,.2f}")
+    mc1.metric("Total revenus", f"€{total_income:,.2f}")
+    mc2.metric("Total dépenses", f"€{total_expenses:,.2f}")
+    mc3.metric("Solde", f"€{total_income - total_expenses:,.2f}")
 
     # --- Drill-down ---
-    st.subheader("Details")
+    st.subheader("Détail")
     all_categories = sorted({t.category for t in txs})
     all_accounts = sorted({t.account for t in txs})
 
     fcol1, fcol2, fcol3, fcol4 = st.columns(4)
     selected_label = fcol1.selectbox(
-        "Month", [_month_label(k) for k in sorted(sorted_keys, reverse=True)]
+        "Mois", [_month_label(k) for k in sorted(sorted_keys, reverse=True)]
     )
-    selected_flow = fcol2.selectbox("Flow", ["All", "Income", "Expenses"])
-    selected_category = fcol3.selectbox("Category", ["All", *all_categories])
-    selected_account = fcol4.selectbox("Account", ["All", *all_accounts])
+    selected_flow = fcol2.selectbox("Flux", ["Tous", "Revenus", "Dépenses"])
+    selected_category = fcol3.selectbox("Catégorie", ["Toutes", *all_categories])
+    selected_account = fcol4.selectbox("Compte", ["Tous", *all_accounts])
 
     selected_key = (int(selected_label[:4]), int(selected_label[5:7]))
     month_txs = [t for t in txs if (t.date.year, t.date.month) == selected_key]
-    if selected_flow == "Income":
+    if selected_flow == "Revenus":
         month_txs = [t for t in month_txs if t.amount >= 0]
-    elif selected_flow == "Expenses":
+    elif selected_flow == "Dépenses":
         month_txs = [t for t in month_txs if t.amount < 0]
-    if selected_category != "All":
+    if selected_category != "Toutes":
         month_txs = [t for t in month_txs if t.category == selected_category]
-    if selected_account != "All":
+    if selected_account != "Tous":
         month_txs = [t for t in month_txs if t.account == selected_account]
 
     rows = [
         {
             "Date": t.date,
-            "Label": t.label,
-            "Category": t.category,
-            "Supplier": t.supplier,
-            "Amount": t.amount,
-            "Account": t.account,
+            "Libellé": t.label,
+            "Catégorie": t.category,
+            "Fournisseur": t.supplier,
+            "Montant": t.amount,
+            "Compte": t.account,
         }
         for t in month_txs
     ]
@@ -204,7 +204,7 @@ def main() -> None:
     )
     if selected_indices:
         selected_labels = [month_txs[i].label for i in selected_indices]
-        if st.button(f"Ignore {len(selected_labels)} selected label(s)"):
+        if st.button(f"Exclure {len(selected_labels)} libellé(s) sélectionné(s)"):
             rules = st.session_state.ignore_rules
             for lbl in selected_labels:
                 if lbl not in rules:
@@ -215,8 +215,8 @@ def main() -> None:
     month_income = sum(t.amount for t in month_txs if t.amount >= 0)
     month_expenses = sum(-t.amount for t in month_txs if t.amount < 0)
     c1, c2 = st.columns(2)
-    c1.metric("Income", f"€{month_income:,.2f}")
-    c2.metric("Expenses", f"€{month_expenses:,.2f}")
+    c1.metric("Revenus", f"€{month_income:,.2f}")
+    c2.metric("Dépenses", f"€{month_expenses:,.2f}")
 
 
 if __name__ == "__main__":
