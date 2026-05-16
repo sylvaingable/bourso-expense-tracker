@@ -56,7 +56,7 @@ def test_filter_drops_both_legs_of_transfer() -> None:
         amount=500.0,
         account="Compte joint",
     )
-    assert filter_transactions([debit, credit], []) == []
+    assert filter_transactions([debit, credit], ["Virement Sylvain"]) == []
 
 
 def test_filter_applies_user_rules() -> None:

@@ -43,13 +43,6 @@ def load_transactions(file: TextIO) -> list[Transaction]:
     return [parse_row(row) for row in reader]
 
 
-HARDCODED_PATTERNS: tuple[str, ...] = (
-    "Virement Sylvain",
-    "Pret immobilier Sylvain",
-    "Relevé différé Carte",
-)
-
-
 def should_drop(label: str, patterns: Iterable[str]) -> bool:
     lower = label.lower()
     return any(p.lower() in lower for p in patterns)
@@ -58,8 +51,7 @@ def should_drop(label: str, patterns: Iterable[str]) -> bool:
 def filter_transactions(
     txs: list[Transaction], ignore_patterns: list[str]
 ) -> list[Transaction]:
-    all_patterns = list(HARDCODED_PATTERNS) + ignore_patterns
-    return [t for t in txs if not should_drop(t.label, all_patterns)]
+    return [t for t in txs if not should_drop(t.label, ignore_patterns)]
 
 
 def aggregate_monthly(
