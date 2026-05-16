@@ -149,6 +149,13 @@ def main() -> None:
     fig.update_layout(barmode="group", xaxis_title="Month", yaxis_title="€")
     st.plotly_chart(fig, width="stretch")  # type: ignore[no-untyped-call]
 
+    total_income = sum(income)
+    total_expenses = sum(expenses)
+    mc1, mc2, mc3 = st.columns(3)
+    mc1.metric("Total income", f"€{total_income:,.2f}")
+    mc2.metric("Total expenses", f"€{total_expenses:,.2f}")
+    mc3.metric("Net", f"€{total_income - total_expenses:,.2f}")
+
     # --- Drill-down ---
     st.subheader("Details")
     all_categories = sorted({t.category for t in txs})
