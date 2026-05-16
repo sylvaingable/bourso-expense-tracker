@@ -161,7 +161,6 @@ def main() -> None:
     selected_flow = fcol2.selectbox("Flow", ["All", "Income", "Expenses"])
     selected_category = fcol3.selectbox("Category", ["All", *all_categories])
     selected_account = fcol4.selectbox("Account", ["All", *all_accounts])
-    query = st.text_input("Search label").lower()
 
     selected_key = (int(selected_label[:4]), int(selected_label[5:7]))
     month_txs = [t for t in txs if (t.date.year, t.date.month) == selected_key]
@@ -173,8 +172,6 @@ def main() -> None:
         month_txs = [t for t in month_txs if t.category == selected_category]
     if selected_account != "All":
         month_txs = [t for t in month_txs if t.account == selected_account]
-    if query:
-        month_txs = [t for t in month_txs if query in t.label.lower()]
 
     rows = [
         {
@@ -192,7 +189,7 @@ def main() -> None:
         width="stretch",
         selection_mode="multi-row",
         on_select="rerun",
-        key=f"df_{selected_label}_{selected_flow}_{selected_category}_{selected_account}_{query}",
+        key=f"df_{selected_label}_{selected_flow}_{selected_category}_{selected_account}",
     )  # type: ignore[no-untyped-call]
 
     selected_indices: list[int] = (getattr(selection, "selection", None) or {}).get(
