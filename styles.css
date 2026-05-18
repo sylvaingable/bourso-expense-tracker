@@ -263,6 +263,11 @@ tr.selected td { background: #edf3fb; }
 .amount.income { color: var(--color-income); }
 .amount.expense { color: var(--color-expense); }
 
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--color-text); }
+.sort-icon { margin-left: var(--space-xs); opacity: .4; font-size: 11px; }
+.sort-icon.active { opacity: 1; color: var(--color-accent); }
+
 /* ── Exclude button ── */
 #exclude-btn {
   margin-bottom: var(--space-sm);

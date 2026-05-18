@@ -48,7 +48,7 @@ export function renderDrilldownFilters(container, { months, categories, accounts
   });
 }
 
-export function renderDrilldownTable(container, txs, selectedLabels, onToggle, onExclude) {
+export function renderDrilldownTable(container, txs, selectedLabels, sort, onSort, onToggle, onExclude) {
   const tbody = document.createDocumentFragment();
 
   txs.forEach(t => {
@@ -72,12 +72,21 @@ export function renderDrilldownTable(container, txs, selectedLabels, onToggle, o
     ? `<button id="exclude-btn">Exclure ${selectedCount} libellé(s) sélectionné(s)</button>`
     : '';
 
+  const sortIcon = (col) => {
+    if (sort.col !== col) return '<span class="sort-icon">⇅</span>';
+    return sort.dir === 'asc' ? '<span class="sort-icon active">↑</span>' : '<span class="sort-icon active">↓</span>';
+  };
+
   container.innerHTML = `
     ${excludeBtn}
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th></th><th>Date</th><th>Libellé</th><th>Catégorie</th><th>Fournisseur</th><th>Montant</th><th>Compte</th>
+          <th></th>
+          <th class="sortable" data-col="date">Date ${sortIcon('date')}</th>
+          <th>Libellé</th><th>Catégorie</th><th>Fournisseur</th>
+          <th class="sortable" data-col="amount">Montant ${sortIcon('amount')}</th>
+          <th>Compte</th>
         </tr></thead>
         <tbody id="drilldown-tbody"></tbody>
       </table>
@@ -87,6 +96,9 @@ export function renderDrilldownTable(container, txs, selectedLabels, onToggle, o
   if (selectedCount > 0) {
     container.querySelector('#exclude-btn').addEventListener('click', onExclude);
   }
+  container.querySelectorAll('th.sortable').forEach(th => {
+    th.addEventListener('click', () => onSort(th.dataset.col));
+  });
 }
 
 export function renderDrilldownMetrics(container, txs) {

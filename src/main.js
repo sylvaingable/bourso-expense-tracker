@@ -15,6 +15,7 @@ const state = {
   ignoreRules: loadIgnoreRules(),
   filters: { month: null, flow: 'Tous', category: 'Toutes', account: 'Tous', search: '' },
   selectedLabels: new Set(),
+  sort: { col: null, dir: 'asc' },
 };
 
 const canvas = document.getElementById('overview-chart');
@@ -87,10 +88,18 @@ function update() {
     }
   );
 
+  const sortedTxs = sortTransactions(drillTxs, state.sort);
+
   renderDrilldownTable(
     document.querySelector('[data-region="drilldown-table"]'),
-    drillTxs,
+    sortedTxs,
     state.selectedLabels,
+    state.sort,
+    (col) => {
+      if (state.sort.col === col) state.sort.dir = state.sort.dir === 'asc' ? 'desc' : 'asc';
+      else { state.sort.col = col; state.sort.dir = 'asc'; }
+      update();
+    },
     (label) => {
       if (state.selectedLabels.has(label)) state.selectedLabels.delete(label);
       else state.selectedLabels.add(label);
@@ -141,6 +150,16 @@ document.getElementById('add-rule-btn').addEventListener('click', () => {
 document.getElementById('new-rule-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('add-rule-btn').click();
 });
+
+function sortTransactions(txs, { col, dir }) {
+  if (!col) return txs;
+  const sorted = [...txs].sort((a, b) => {
+    if (col === 'date') return a.date < b.date ? -1 : a.date > b.date ? 1 : 0;
+    if (col === 'amount') return a.amount - b.amount;
+    return 0;
+  });
+  return dir === 'desc' ? sorted.reverse() : sorted;
+}
 
 // Initial render (shows empty state + rules from localStorage)
 overviewSection.hidden = true;
