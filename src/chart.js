@@ -1,6 +1,6 @@
 let chartInstance = null;
 
-export function renderChart(canvas, monthly, sortedKeys) {
+export function renderChart(canvas, monthly, sortedKeys, onBarClick) {
   const income = sortedKeys.map(k => monthly[k].income);
   const expenses = sortedKeys.map(k => monthly[k].expenses);
   const net = sortedKeys.map((k, i) => income[i] - expenses[i]);
@@ -14,8 +14,13 @@ export function renderChart(canvas, monthly, sortedKeys) {
     ],
   };
 
+  const clickHandler = (event, elements) => {
+    if (elements.length > 0) onBarClick(sortedKeys[elements[0].index]);
+  };
+
   if (chartInstance) {
     chartInstance.data = data;
+    chartInstance.options.onClick = clickHandler;
     chartInstance.update();
   } else {
     chartInstance = new Chart(canvas, {
@@ -23,6 +28,7 @@ export function renderChart(canvas, monthly, sortedKeys) {
       data,
       options: {
         responsive: true,
+        onClick: clickHandler,
         plugins: { legend: { position: 'top' } },
         scales: {
           x: { title: { display: true, text: 'Mois' } },

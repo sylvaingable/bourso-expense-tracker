@@ -50,7 +50,11 @@ function update() {
   drilldownSection.hidden = false;
 
   // Overview
-  renderChart(canvas, monthly, keys);
+  renderChart(canvas, monthly, keys, (month) => {
+    state.filters.month = month;
+    state.selectedLabels.clear();
+    update();
+  });
   const totalIncome = keys.reduce((s, k) => s + monthly[k].income, 0);
   const totalExpenses = keys.reduce((s, k) => s + monthly[k].expenses, 0);
   renderMetrics(document.querySelector('[data-region="metrics"]'), { totalIncome, totalExpenses });
