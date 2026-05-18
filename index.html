@@ -36,9 +36,12 @@
 
     <section id="drilldown-section">
       <h2>Détail</h2>
-      <div id="drilldown-filters" data-region="drilldown-filters"></div>
-      <div class="search-row">
-        <input type="search" id="filter-search" placeholder="Rechercher dans le libellé…">
+      <div class="filters-bar">
+        <div id="drilldown-filters" data-region="drilldown-filters"></div>
+        <label class="search-label">
+          Recherche
+          <input type="search" id="filter-search" placeholder="Dans le libellé…">
+        </label>
       </div>
       <div data-region="drilldown-table"></div>
     </section>

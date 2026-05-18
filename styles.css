@@ -215,15 +215,23 @@ h2 {
 /* ── Chart ── */
 #overview-chart { max-height: 360px; }
 
-/* ── Drilldown filters ── */
-.filter-row {
+/* ── Drilldown filters + search ── */
+.filters-bar {
   display: flex;
+  align-items: flex-end;
   gap: var(--space-md);
   flex-wrap: wrap;
   margin-bottom: var(--space-md);
 }
 
-.filter-row label {
+.filter-row {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.filter-row label,
+.search-label {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
@@ -241,17 +249,15 @@ h2 {
   cursor: pointer;
 }
 
-/* ── Search ── */
-.search-row {
-  margin-bottom: var(--space-md);
-}
-.search-row input {
-  width: 100%;
-  max-width: 400px;
+#filter-category { max-width: 130px; }
+
+.search-label { flex: 1; min-width: 160px; }
+.search-label input {
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 13px;
+  width: 100%;
 }
 
 /* ── Table ── */
