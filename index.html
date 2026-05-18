@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suivi des dépenses</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/chart.umd.js"></script>
+</head>
+<body>
+  <aside id="sidebar">
+    <section id="import-section">
+      <h2>Import</h2>
+      <label class="file-label">
+        Relevé bancaire
+        <input type="file" id="file-input" accept=".csv">
+      </label>
+    </section>
+    <section id="rules-section">
+      <h2>Règles d'exclusion</h2>
+      <ul id="rules-list" data-region="rules-list"></ul>
+      <div class="rule-add">
+        <input type="text" id="new-rule-input" placeholder="Nouvelle règle…">
+        <button id="add-rule-btn">Ajouter</button>
+      </div>
+    </section>
+  </aside>
+
+  <main id="main">
+    <section id="overview-section">
+      <h2>Vue d'ensemble mensuelle</h2>
+      <div data-region="metrics"></div>
+      <canvas id="overview-chart"></canvas>
+    </section>
+
+    <section id="drilldown-section">
+      <h2>Détail</h2>
+      <div id="drilldown-filters" data-region="drilldown-filters"></div>
+      <div data-region="drilldown-table"></div>
+      <div data-region="drilldown-metrics"></div>
+    </section>
+
+    <p id="empty-state">Importez un export CSV BoursoBank pour commencer.</p>
+  </main>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
