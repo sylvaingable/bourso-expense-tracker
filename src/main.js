@@ -129,6 +129,12 @@ document.getElementById('file-input').addEventListener('change', e => {
   reader.readAsText(file, 'UTF-8');
 });
 
+// Sidebar toggle
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  const collapsed = document.body.classList.toggle('sidebar-collapsed');
+  document.getElementById('sidebar-toggle').setAttribute('aria-expanded', String(!collapsed));
+});
+
 // Search
 document.getElementById('filter-search').addEventListener('input', e => {
   state.filters.search = e.target.value;

@@ -28,7 +28,10 @@ body {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr;
   min-height: 100vh;
+  transition: grid-template-columns 0.25s ease;
 }
+
+body.sidebar-collapsed { grid-template-columns: 48px 1fr; }
 
 /* ── Sidebar ── */
 #sidebar {
@@ -41,7 +44,41 @@ body {
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden auto;
+}
+
+#sidebar-toggle {
+  flex-shrink: 0;
+  align-self: flex-end;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  transition: color 0.15s, background 0.15s, transform 0.25s ease;
+}
+#sidebar-toggle:hover { background: var(--color-bg); color: var(--color-text); }
+
+body.sidebar-collapsed #sidebar-toggle {
+  align-self: center;
+  transform: rotate(180deg);
+}
+
+#import-section,
+#rules-section {
+  transition: opacity 0.15s ease;
+}
+body.sidebar-collapsed #import-section,
+body.sidebar-collapsed #rules-section {
+  opacity: 0;
+  pointer-events: none;
 }
 
 #sidebar h2 {
