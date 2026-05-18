@@ -1,15 +1,11 @@
 # User-local state
 ignore_rules.json
+
+# Sample data (personal banking data)
 sample_data
 
-# Python
-__pycache__/
-*.pyc
-.venv/
-
-# Tool caches
-.ruff_cache/
-.pytest_cache/
+# Node
+node_modules/
 
 # Editor / OS
 .~lock.*

@@ -1,39 +1,45 @@
-# expense-tracker
+# Expense Tracker
 
-Personal expense tracker for BoursoBank CSV exports. Ingests a multi-account export, drops internal transfers and aggregated debits, applies user-defined ignore rules, and renders a monthly income/expenses overview with per-month drill-down.
+Personal expense tracker for BoursoBank CSV exports. Vanilla HTML/CSS/JS — no build step, no server required.
 
 > Vibecoded with [Claude Code](https://claude.ai/code).
 
+## Open
+
+```
+open index.html
+```
+
+Or serve locally (needed if your browser blocks `file://` ES modules):
+
+```
+python3 -m http.server 8000
+# then open http://localhost:8000
+```
+
+## Run tests
+
+Requires Node.js ≥ 18.
+
+```
+node --test tests/*.test.js
+```
+
+## Usage
+
+1. Export your transactions from BoursoBank as CSV.
+2. Open `index.html`, click **Relevé bancaire** and select the CSV.
+3. Use the **Règles d'exclusion** sidebar to add patterns — any transaction whose label contains the pattern (case-insensitive) will be hidden.
+4. In the drill-down table, select rows and click **Exclure N libellé(s) sélectionné(s)** to bulk-add ignore rules.
+
+Ignore rules are persisted in `localStorage` (key: `expense-tracker:ignore-rules`).
+
 ## Stack
 
-- Python 3.13, [uv](https://docs.astral.sh/uv/)
-- [Streamlit](https://streamlit.io/) — UI
-- [Plotly](https://plotly.com/python/) — charts
-
-## Quickstart
-
-```bash
-uv run streamlit run app.py
-```
-
-Then open `http://localhost:8501` and upload your BoursoBank CSV export.
-
-## Deployment
-
-### Self-hosted with Docker
-
-A `Dockerfile` is included in the repo.
-
-```bash
-docker build -t expense-tracker .
-touch ignore_rules.json   # must exist before mounting, or Docker creates a directory
-docker run -p 8501:8501 -v ./ignore_rules.json:/app/ignore_rules.json expense-tracker
-```
-
-### Fly.io / Railway / Render
-
-Any platform that runs a Docker container or a `uv`-managed Python app will work. Set the start command to `uv run streamlit run app.py --server.address=0.0.0.0 --server.port=$PORT`.
+- Vanilla ES modules (`src/`), no framework, no build step
+- [Chart.js v4](https://www.chartjs.org/) vendored at `vendor/chart.umd.js`
+- Tests via `node:test` + `node:assert/strict`
 
 ## Data privacy
 
-The CSV contains real banking data. Don't commit it, don't paste it into external services, and prefer self-hosted deployment if privacy matters.
+The CSV contains real banking data. Don't commit it, don't paste it into external services.
