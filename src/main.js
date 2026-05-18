@@ -14,7 +14,7 @@ import {
 const state = {
   transactions: [],
   ignoreRules: loadIgnoreRules(),
-  filters: { month: null, flow: 'Tous', category: 'Toutes', account: 'Tous' },
+  filters: { month: null, flow: 'Tous', category: 'Toutes', account: 'Tous', search: '' },
   selectedLabels: new Set(),
 };
 
@@ -114,6 +114,12 @@ document.getElementById('file-input').addEventListener('change', e => {
     update();
   };
   reader.readAsText(file, 'UTF-8');
+});
+
+// Search
+document.getElementById('filter-search').addEventListener('input', e => {
+  state.filters.search = e.target.value;
+  update();
 });
 
 // Add ignore rule
