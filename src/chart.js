@@ -8,9 +8,9 @@ export function renderChart(canvas, monthly, sortedKeys) {
   const data = {
     labels: sortedKeys,
     datasets: [
-      { label: 'Revenus', data: income, backgroundColor: '#2ca02c', type: 'bar' },
-      { label: 'Dépenses', data: expenses, backgroundColor: '#d62728', type: 'bar' },
-      { label: 'Solde', data: net, borderColor: '#1f77b4', backgroundColor: 'transparent', type: 'line', tension: 0.3, pointRadius: 3 },
+      { label: 'Revenus', data: income, backgroundColor: '#2ca02c', type: 'bar', order: 1 },
+      { label: 'Dépenses', data: expenses, backgroundColor: '#d62728', type: 'bar', order: 1 },
+      { label: 'Solde', data: net, borderColor: '#1f77b4', backgroundColor: 'transparent', type: 'line', tension: 0.3, pointRadius: 3, order: 0 },
     ],
   };
 
