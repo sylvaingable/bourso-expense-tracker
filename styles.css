@@ -168,6 +168,12 @@ h2 {
 .metric-value.expense { color: var(--color-expense); }
 .metrics-sm .metric { min-width: 120px; }
 .metrics-sm .metric-value { font-size: 14px; }
+.metrics-divider {
+  width: 1px;
+  background: var(--color-border);
+  margin: 0 var(--space-xs);
+  align-self: stretch;
+}
 
 /* ── Chart ── */
 #overview-chart { max-height: 360px; }

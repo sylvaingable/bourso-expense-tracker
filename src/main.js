@@ -8,7 +8,6 @@ import {
   renderSidebar,
   renderDrilldownFilters,
   renderDrilldownTable,
-  renderDrilldownMetrics,
 } from './render.js';
 
 const state = {
@@ -49,21 +48,28 @@ function update() {
   overviewSection.hidden = false;
   drilldownSection.hidden = false;
 
-  // Overview
+  // Ensure selected month is valid before computing drilldown
+  const reversedKeys = [...keys].reverse();
+  if (!state.filters.month || !keys.includes(state.filters.month)) {
+    state.filters.month = reversedKeys[0] || null;
+  }
+
+  // Overview metrics + current month metrics side by side
+  const totalIncome = keys.reduce((s, k) => s + monthly[k].income, 0);
+  const totalExpenses = keys.reduce((s, k) => s + monthly[k].expenses, 0);
+  const drillTxs = applyDrilldownFilters(filtered, state.filters);
+  const monthIncome = drillTxs.filter(t => t.amount >= 0).reduce((s, t) => s + t.amount, 0);
+  const monthExpenses = drillTxs.filter(t => t.amount < 0).reduce((s, t) => s - t.amount, 0);
+  renderMetrics(document.querySelector('[data-region="metrics"]'), {
+    totalIncome, totalExpenses,
+    month: state.filters.month, monthIncome, monthExpenses,
+  });
+
   renderChart(canvas, monthly, keys, (month) => {
     state.filters.month = month;
     state.selectedLabels.clear();
     update();
   });
-  const totalIncome = keys.reduce((s, k) => s + monthly[k].income, 0);
-  const totalExpenses = keys.reduce((s, k) => s + monthly[k].expenses, 0);
-  renderMetrics(document.querySelector('[data-region="metrics"]'), { totalIncome, totalExpenses });
-
-  // Ensure selected month is valid
-  const reversedKeys = [...keys].reverse();
-  if (!state.filters.month || !keys.includes(state.filters.month)) {
-    state.filters.month = reversedKeys[0] || null;
-  }
 
   const categories = [...new Set(filtered.map(t => t.category))].sort();
   const accounts = [...new Set(filtered.map(t => t.account))].sort();
@@ -81,7 +87,6 @@ function update() {
     }
   );
 
-  const drillTxs = applyDrilldownFilters(filtered, state.filters);
   renderDrilldownTable(
     document.querySelector('[data-region="drilldown-table"]'),
     drillTxs,
@@ -100,7 +105,6 @@ function update() {
       update();
     }
   );
-  renderDrilldownMetrics(document.querySelector('[data-region="drilldown-metrics"]'), drillTxs);
 }
 
 // File upload

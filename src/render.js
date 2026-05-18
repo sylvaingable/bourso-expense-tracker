@@ -1,12 +1,17 @@
 const fmt = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
 
-export function renderMetrics(container, { totalIncome, totalExpenses }) {
+export function renderMetrics(container, { totalIncome, totalExpenses, month, monthIncome, monthExpenses }) {
   const net = totalIncome - totalExpenses;
+  const monthSection = month != null ? `
+    <div class="metrics-divider"></div>
+    <div class="metric"><span class="metric-label">Revenus — ${month}</span><span class="metric-value income">${fmt.format(monthIncome)}</span></div>
+    <div class="metric"><span class="metric-label">Dépenses — ${month}</span><span class="metric-value expense">${fmt.format(monthExpenses)}</span></div>` : '';
   container.innerHTML = `
     <div class="metrics">
       <div class="metric"><span class="metric-label">Total revenus</span><span class="metric-value income">${fmt.format(totalIncome)}</span></div>
       <div class="metric"><span class="metric-label">Total dépenses</span><span class="metric-value expense">${fmt.format(totalExpenses)}</span></div>
-      <div class="metric"><span class="metric-label">Solde</span><span class="metric-value ${net >= 0 ? 'income' : 'expense'}">${fmt.format(net)}</span></div>
+      <div class="metric"><span class="metric-label">Solde total</span><span class="metric-value ${net >= 0 ? 'income' : 'expense'}">${fmt.format(net)}</span></div>
+      ${monthSection}
     </div>`;
 }
 
