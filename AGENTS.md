@@ -71,16 +71,16 @@ Then open `index.html`, upload the sample CSV, and verify the UI end-to-end.
 
 ## Data
 
-CSV columns consumed:
+CSV columns consumed (headers matched by name, ignoring case, accents and punctuation):
 
 | Column | Use |
 |---|---|
-| `dateOp` | Transaction date (`YYYY-MM-DD`) |
-| `label` | Free-text description; used for all filtering |
-| `category` | Display only |
-| `supplierFound` | Display only (mapped to `supplier`) |
-| `amount` | French-formatted signed float |
-| `accountLabel` | One of the three BoursoBank accounts |
+| `Date Opération` | Transaction date (`YYYY-MM-DD`) |
+| `Libellé` | Free-text description; used for all filtering |
+| `Catégorie` | Display only |
+| `Libellé Suggéré` | Display only (mapped to `supplier`) |
+| first `Solde` | Amount: French-formatted signed float (the second `Solde` is the account balance, ignored) |
+| `Libellé Compte` | One of the three BoursoBank accounts |
 
 **Amount format examples:**
 

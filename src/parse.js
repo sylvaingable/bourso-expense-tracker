@@ -1,15 +1,20 @@
 export function parseAmount(raw) {
-  return parseFloat(raw.replace(/^"|"$/g, '').replace(/ /g, '').replace(',', '.'));
+  return parseFloat(raw.replace(/^"|"$/g, '').replace(/\s/g, '').replace(',', '.'));
+}
+
+// "Libellé Suggéré" -> "libellesuggere"
+export function normalizeHeader(h) {
+  return h.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
 export function parseRow(row) {
   return {
-    date: row['dateOp'],
-    label: row['label'],
-    category: row['category'],
-    supplier: row['supplierFound'],
-    amount: parseAmount(row['amount']),
-    account: row['accountLabel'],
+    date: row['dateoperation'],
+    label: row['libelle'],
+    category: row['categorie'],
+    supplier: row['libellesuggere'],
+    amount: parseAmount(row['solde']),
+    account: row['libellecompte'],
   };
 }
 
@@ -18,14 +23,17 @@ export function parseCSV(text) {
   if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
   // Normalize line endings
   const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
-  const headers = splitLine(lines[0]);
+  const headers = splitLine(lines[0]).map(normalizeHeader);
   const rows = [];
   for (let i = 1; i < lines.length; i++) {
     const line = lines[i];
     if (!line.trim()) continue;
     const values = splitLine(line);
     const row = {};
-    headers.forEach((h, idx) => { row[h] = values[idx] ?? ''; });
+    headers.forEach((h, idx) => {
+      // "Solde" appears twice (amount, then balance): keep the first.
+      if (!(h in row)) row[h] = values[idx] ?? '';
+    });
     rows.push(row);
   }
   return rows;

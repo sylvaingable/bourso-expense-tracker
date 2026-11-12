@@ -9,7 +9,13 @@ describe('parseAmount', () => {
   it('plain negative 2', () => assert.equal(parseAmount('-295,16'), -295.16));
 });
 
-const INLINE_CSV = `dateOp;label;category;supplierFound;amount;accountLabel\r\n2026-01-05;Salaire janvier;Revenus;Employeur;2000,00;Compte A\r\n2026-01-20;Supermarché;Alimentation;Carrefour;-45,30;Compte A\r\n2026-02-03;Abonnement;Loisirs;Spotify;"-9,99";Compte B\r\n`;
+const HEADER = '"Date Opération";"Date Valeur";Libellé;"Libellé Suggéré";Catégorie;"Catégorie Parente";Solde;Commentaire;"Numéro Compte";"Libellé Compte";Solde;Pointage';
+const INLINE_CSV = [
+  HEADER,
+  '2026-01-05;2026-01-05;Salaire janvier;Employeur;Revenus;Revenus;"2 000,00";;123;Compte A;5000.00;Non',
+  '2026-01-20;2026-01-20;Supermarché;Carrefour;Alimentation;Vie;-45,30;;123;Compte A;4954.70;Non',
+  '2026-02-03;2026-02-03;Abonnement;Spotify;Loisirs;Loisirs;"-9,99";;456;Compte B;100.00;Non',
+].join('\r\n') + '\r\n';
 
 describe('loadTransactions', () => {
   it('parses 3 rows', () => {
@@ -21,5 +27,8 @@ describe('loadTransactions', () => {
     assert.ok(Math.abs(txs[1].amount - (-45.30)) < 0.001);
     assert.ok(Math.abs(txs[2].amount - (-9.99)) < 0.001);
     assert.equal(txs[2].account, 'Compte B');
+    assert.equal(txs[0].label, 'Salaire janvier');
+    assert.equal(txs[0].supplier, 'Employeur');
+    assert.equal(txs[1].category, 'Alimentation');
   });
 });
